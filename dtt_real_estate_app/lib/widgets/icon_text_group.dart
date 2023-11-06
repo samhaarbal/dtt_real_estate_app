@@ -1,7 +1,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'styles.dart';
+import 'utils/styles.dart';
 
 //Create separate class for the IconTextGroup. Separate file so that we can use it in both the houselistpage and housedetailpage.
 class IconTextGroup extends StatelessWidget {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sizer/sizer.dart';
-import 'styles.dart';
+import 'utils/styles.dart';
 import 'package:intl/intl.dart';
 import 'house_detail.dart';
-import 'house.dart';
+import 'models/house.dart';
 import 'package:latlong2/latlong.dart';
-import 'distance_widget.dart';
-import 'icon_text_group.dart';
+import 'widgets/distance_widget.dart';
+import 'widgets/icon_text_group.dart';
 
 
 class HousesListPage extends StatefulWidget {

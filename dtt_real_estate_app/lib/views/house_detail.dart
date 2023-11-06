@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'house.dart';
+import 'models/house.dart';
 import 'package:sizer/sizer.dart';
-import 'styles.dart';
+import 'utils/styles.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'LocationMapWidget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'icon_text_group.dart';
+import 'widgets/icon_text_group.dart';
 
 class HouseDetailPage extends StatefulWidget { //stateful because of the scrolling possibility, mutable states because of user input
   final House house; //import data from the house instance set up inside the itembuilder in the houselistpage

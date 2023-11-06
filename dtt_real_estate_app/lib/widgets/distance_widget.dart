@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'styles.dart';
+import 'utils/styles.dart';
 
 
 class DistanceWidget extends StatefulWidget { //designed as a StatefulWidget since it involves a Future that computes the distance asynchronously, and the state of the widget changes based on the result of this Future.
