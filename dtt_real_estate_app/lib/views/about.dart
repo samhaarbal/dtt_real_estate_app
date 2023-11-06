@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'utils/styles.dart';
+import '../utils/styles.dart';
 
 
 class InfoPage extends StatelessWidget { // stateless because it holds no mutable states. Easy page.

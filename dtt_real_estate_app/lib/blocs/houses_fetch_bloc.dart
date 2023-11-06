@@ -1,23 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:dtt_real_estate_app/events/house_fetch_event.dart';
-import 'package:dtt_real_estate_app/states/houses_state.dart';
+import 'package:dtt_real_estate_app/events/houses_fetch_event.dart';
+import 'package:dtt_real_estate_app/states/houses_fetch_states.dart';
 import 'package:dtt_real_estate_app/models/house.dart';
 
-class HouseFetchBloc extends Bloc<HouseEvent, HousesState> {
-  HouseFetchBloc() : super(HousesInitial());
+class HousesFetchBloc extends Bloc<HousesEvent, HousesState> {
+  HousesFetchBloc() : super(HousesInitial()) {
+    on<HousesFetchRequested>(_onHousesFetchRequested);
+  }
 
-  @override
-  Stream<HousesState> mapEventToState(HouseEvent event) async* {
-    if (event is HouseFetchRequested) {
-      yield HousesLoadInProgress();
-      try {
-        final houses = await _fetchHouses();
-        yield HousesLoadSuccess(houses);
-      } catch (_) {
-        yield HousesLoadFailure();
-      }
+  Future<void> _onHousesFetchRequested(
+      HousesFetchRequested event,
+      Emitter<HousesState> emit,
+      ) async {
+    emit(HousesLoadInProgress());
+    try {
+      final houses = await _fetchHouses();
+      emit(HousesLoadSuccess(houses));
+    } catch (_) {
+      emit(HousesLoadFailure());
     }
   }
 
