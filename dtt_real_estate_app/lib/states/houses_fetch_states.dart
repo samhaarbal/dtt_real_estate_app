@@ -1,15 +1,15 @@
 import 'package:dtt_real_estate_app/models/house.dart';
 
-abstract class HousesState {}
+abstract class HousesFetchState {}
 
-class HousesInitial extends HousesState {}
+class HousesFetchInitial extends HousesFetchState {}
 
-class HousesLoadInProgress extends HousesState {}
+class HousesFetchInProgress extends HousesFetchState {}
 
-class HousesLoadSuccess extends HousesState {
+class HousesFetchSuccess extends HousesFetchState {
   final List<House> houses;
 
-  HousesLoadSuccess(this.houses);
+  HousesFetchSuccess(this.houses);
 }
 
-class HousesLoadFailure extends HousesState {}
+class HousesFetchFailure extends HousesFetchState {}

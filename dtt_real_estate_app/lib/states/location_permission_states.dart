@@ -2,8 +2,6 @@ import 'package:latlong2/latlong.dart';
 
 abstract class LocationPermissionState {}
 
-class LocationPermissionInitial extends LocationPermissionState {}
-
 class LocationPermissionLoading extends LocationPermissionState {}
 
 class LocationPermissionGrantedState extends LocationPermissionState {

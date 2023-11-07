@@ -5,21 +5,22 @@ import 'package:dtt_real_estate_app/events/houses_fetch_event.dart';
 import 'package:dtt_real_estate_app/states/houses_fetch_states.dart';
 import 'package:dtt_real_estate_app/models/house.dart';
 
-class HousesFetchBloc extends Bloc<HousesEvent, HousesState> {
-  HousesFetchBloc() : super(HousesInitial()) {
+class HousesFetchBloc extends Bloc<HousesEvent, HousesFetchState> {
+  HousesFetchBloc() : super(HousesFetchInitial()) {
     on<HousesFetchRequested>(_onHousesFetchRequested);
   }
 
   Future<void> _onHousesFetchRequested(
       HousesFetchRequested event,
-      Emitter<HousesState> emit,
+      Emitter<HousesFetchState> emit,
       ) async {
-    emit(HousesLoadInProgress());
+    emit(HousesFetchInProgress());
     try {
       final houses = await _fetchHouses();
-      emit(HousesLoadSuccess(houses));
+      emit(HousesFetchSuccess(houses));
+      print('Houses fetched successfully: ${houses.length}');
     } catch (_) {
-      emit(HousesLoadFailure());
+      emit(HousesFetchFailure());
     }
   }
 
