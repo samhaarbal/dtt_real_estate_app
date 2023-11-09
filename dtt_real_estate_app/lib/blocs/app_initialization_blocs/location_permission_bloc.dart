@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:dtt_real_estate_app/events/location_permission_event.dart';
-import 'package:dtt_real_estate_app/states/location_permission_states.dart';
+import 'package:dtt_real_estate_app/events/app_initialization_events/location_permission_event.dart';
+import 'package:dtt_real_estate_app/states/app_initialization_states/location_permission_states.dart';
 import 'package:permission_handler/permission_handler.dart' as hand;
 
 class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermissionState> {

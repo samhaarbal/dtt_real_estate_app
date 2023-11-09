@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:dtt_real_estate_app/events/houses_fetch_event.dart';
-import 'package:dtt_real_estate_app/states/houses_fetch_states.dart';
+import 'package:dtt_real_estate_app/events/app_initialization_events/houses_fetch_event.dart';
+import 'package:dtt_real_estate_app/states/app_initialization_states/houses_fetch_states.dart';
 import 'package:dtt_real_estate_app/models/house.dart';
 
 class HousesFetchBloc extends Bloc<HousesEvent, HousesFetchState> {

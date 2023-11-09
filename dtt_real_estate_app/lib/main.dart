@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'blocs/houses_fetch_bloc.dart';
+import 'blocs/app_initialization_blocs/houses_fetch_bloc.dart';
 import 'utils/styles.dart';
 import 'views/houses_list_page.dart';
-import 'views/about.dart';
+import 'views/about_page.dart';
 import 'views/splash_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'blocs/location_permission_bloc.dart';
-import 'events/houses_fetch_event.dart';
-import 'events/location_permission_event.dart';
-import 'states/houses_fetch_states.dart';
-import 'states/location_permission_states.dart';
+import 'blocs/app_initialization_blocs/location_permission_bloc.dart';
+import 'events/app_initialization_events/houses_fetch_event.dart';
+import 'events/app_initialization_events/location_permission_event.dart';
+import 'states/app_initialization_states/houses_fetch_states.dart';
+import 'states/app_initialization_states/location_permission_states.dart';
 import 'package:latlong2/latlong.dart';
 import 'widgets/custom_bottom_navigation_bar.dart';
+import '../blocs/house_list_manage_blocs/house_list_manage_bloc.dart';
+import '../states/house_list_manage_states/house_list_manage_states.dart';
 
 void main() {
   runApp(
@@ -30,7 +32,7 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {  // simply serves as an entry point for my application, holds no mutable state so stateless
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Sizer(
@@ -84,10 +86,6 @@ class _HomePageState extends State<HomePage> {
                 (locationPermissionState is LocationPermissionGrantedState ||
                     locationPermissionState is LocationPermissionDeniedState);
 
-            print(showSplashScreen);
-            print(locationPermissionState);
-            print(housesFetchState);
-
             // Now return the Scaffold with the conditions above
             return Scaffold(
               backgroundColor: Palette.lightgray,
@@ -96,12 +94,16 @@ class _HomePageState extends State<HomePage> {
               IndexedStack(
                 index: _currentIndex,
                 children: [
-                  HousesListPage(
-                    currentLocation: locationPermissionState is LocationPermissionGrantedState
-                        ? locationPermissionState.location
-                        : currentLocation, // Use currentLocation from the state if granted
-                    allHouses: housesFetchState is HousesFetchSuccess ? housesFetchState.houses : [],
-                  ),
+                  if (housesFetchState is HousesFetchSuccess && LocationPermissionState is! LocationPermissionLoading)
+                    BlocProvider<HouseListManageBloc>(
+                      create: (context) => HouseListManageBloc((housesFetchState as HousesFetchSuccess).houses),
+                      child: HousesListPage(
+                        currentLocation: locationPermissionState is LocationPermissionGrantedState
+                            ? (locationPermissionState as LocationPermissionGrantedState).location
+                            : currentLocation,
+                        allHouses: (housesFetchState as HousesFetchSuccess).houses,
+                      ),
+                    ),
                   InfoPage(),
                 ],
               ),
