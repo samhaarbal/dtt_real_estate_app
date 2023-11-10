@@ -44,4 +44,22 @@ class House {
         createdDate: DateTime.parse(json['createdDate'])
     );
   }
+
+  // Convert a House instance into a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'image': image,
+      'price': price,
+      'bedrooms': bedrooms,
+      'bathrooms': bathrooms,
+      'size': size,
+      'description': description,
+      'zip': zip,
+      'city': city,
+      'latitude': latitude,
+      'longitude': longitude,
+      'createdDate': createdDate.toIso8601String(),
+    };
+  }
 }
