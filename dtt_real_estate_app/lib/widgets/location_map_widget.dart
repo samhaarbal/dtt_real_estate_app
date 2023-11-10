@@ -37,7 +37,7 @@ class LocationMapWidget extends StatelessWidget { //StatelessWidget since it doe
                   height: 10.h,
                   point: LatLng(latitude, longitude),
                   builder: (ctx) => Container(
-                    child: SvgPicture.asset('Icons/ic_location.svg'),
+                    child: SvgPicture.asset('Icons/ic_red_pin.svg'),
                   ),
                 ),
               ],

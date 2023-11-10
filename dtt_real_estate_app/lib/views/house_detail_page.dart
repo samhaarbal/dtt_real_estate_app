@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import '../utils/styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import '../widgets/LocationMapWidget.dart';
+import '../widgets/location_map_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../widgets/icon_text_group.dart';
 

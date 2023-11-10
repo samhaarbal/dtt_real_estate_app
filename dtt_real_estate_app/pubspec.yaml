@@ -40,6 +40,9 @@ dependencies:
   permission_handler: ^11.0.0
   latlong2: ^0.9.0
   flutter_bloc: ^8.1.3
+  connectivity_plus: ^5.0.1
+  shared_preferences: ^2.2.2
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -81,6 +84,7 @@ flutter:
     - Icons/ic_location.svg
     - Icons/ic_search.svg
     - Icons/ic_whatshot.svg
+    - Icons/ic_red_pin.svg
     - Images/launcher_icon.png
     - Images/search_state_empty.png
     - Images/dtt_banner/dtt_banner.png
