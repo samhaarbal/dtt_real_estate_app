@@ -14,7 +14,8 @@ import 'states/app_initialization_states/location_permission_states.dart';
 import 'package:latlong2/latlong.dart';
 import 'widgets/custom_bottom_navigation_bar.dart';
 import '../blocs/house_list_manage_blocs/house_list_manage_bloc.dart';
-import '../states/house_list_manage_states/house_list_manage_states.dart';
+import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
+
 
 void main() {
   runApp(
@@ -25,6 +26,10 @@ void main() {
         ),
         BlocProvider<HousesFetchBloc>(
           create: (context) => HousesFetchBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ImageLoadBloc(),
+          child: MyApp(),
         ),
       ],
       child: MyApp(),
@@ -68,6 +73,7 @@ class _HomePageState extends State<HomePage> {
     BlocProvider.of<HousesFetchBloc>(context).add(HousesFetchRequested());
   }
 
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LocationPermissionBloc, LocationPermissionState>(
@@ -82,26 +88,32 @@ class _HomePageState extends State<HomePage> {
             final showLoadFailureMessage = housesFetchState is HousesFetchFailure;
 
             // Determine if we should show the BottomNavigationBar
-            final showBottomNavigationBar = housesFetchState is HousesFetchSuccess &&
-                (locationPermissionState is LocationPermissionGrantedState ||
+            final showBottomNavigationBar = (housesFetchState is HousesFetchSuccess ||
+                housesFetchState is HousesFetchFailure) &&
+                  (locationPermissionState is LocationPermissionGrantedState ||
                     locationPermissionState is LocationPermissionDeniedState);
+
+
 
             // Now return the Scaffold with the conditions above
             return Scaffold(
               backgroundColor: Palette.lightgray,
               body: showSplashScreen ? SplashScreen() :
-              showLoadFailureMessage ? const Center(child: Text('Failed to load houses')) :
+              showLoadFailureMessage ? const Center(
+                  child: Text('Failed to load houses. Connect to the internet')) :
               IndexedStack(
                 index: _currentIndex,
                 children: [
-                  if (housesFetchState is HousesFetchSuccess && LocationPermissionState is! LocationPermissionLoading)
+                  if (housesFetchState is HousesFetchSuccess &&
+                      LocationPermissionState is! LocationPermissionLoading)
                     BlocProvider<HouseListManageBloc>(
-                      create: (context) => HouseListManageBloc((housesFetchState as HousesFetchSuccess).houses),
+                      create: (context) =>
+                          HouseListManageBloc((housesFetchState).houses),
                       child: HousesListPage(
                         currentLocation: locationPermissionState is LocationPermissionGrantedState
-                            ? (locationPermissionState as LocationPermissionGrantedState).location
+                            ? (locationPermissionState).location
                             : currentLocation,
-                        allHouses: (housesFetchState as HousesFetchSuccess).houses,
+                        allHouses: (housesFetchState).houses,
                       ),
                     ),
                   InfoPage(),
@@ -113,8 +125,10 @@ class _HomePageState extends State<HomePage> {
                   color: Palette.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Palette.darkgray, // Change to desired shadow color
-                      offset: Offset(0, -1.w), // Using negative y-offset for top shadow
+                      color: Palette.darkgray,
+                      // Change to desired shadow color
+                      offset: Offset(0, -1.w),
+                      // Using negative y-offset for top shadow
                       spreadRadius: 0.5.w,
                       blurRadius: 1.5.w,
                     ),
@@ -122,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: CustomBottomNavigationBar(
                   currentIndex: _currentIndex,
-                  onIndexChanged: (index) => setState(() => _currentIndex = index),
+                  onIndexChanged: (index) =>
+                      setState(() => _currentIndex = index),
                 ),
               )
                   : null, // Return null to not show the BottomNavigationBar

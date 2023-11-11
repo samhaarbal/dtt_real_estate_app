@@ -9,9 +9,9 @@ class ImageInitial extends ImageState {}
 class ImageLoadInProgress extends ImageState {}
 
 class ImageLoadSuccess extends ImageState {
-  final File image;
+  final Map<String, File> loadedImages;
 
-  const ImageLoadSuccess({required this.image});
+  const ImageLoadSuccess({required this.loadedImages});
 }
 
 class ImageLoadFailure extends ImageState {

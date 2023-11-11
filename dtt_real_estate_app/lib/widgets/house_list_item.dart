@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../views/house_detail_page.dart';
 import '../models/house.dart';
@@ -17,54 +18,54 @@ class HouseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create an instance of ImageLoadBloc
-    final imageLoadBloc = ImageLoadBloc();
+    // Add the image loading event to the ImageLoadBloc
+    BlocProvider.of<ImageLoadBloc>(context).add(
+        LoadImage('https://intern.d-tt.nl/${house.image}', 'house_${house.id}.jpg')
+    );
 
-    // Add the LoadImage event
-    imageLoadBloc.add(LoadImage(
-      imageUrl: 'https://intern.d-tt.nl/${house.image}',
-      filename: 'house_${house.id}.jpg',
-    ));
-
-    // Provide the existing bloc to the widget tree
-    return BlocProvider.value(
-      value: imageLoadBloc,
-      child: Padding(
-        padding: EdgeInsets.only(top: 2.h, left: 6.w, right: 6.w),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => HouseDetailPage(house: house, calculatedDistance: calculatedDistance),
-            ));
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Palette.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Palette.darkgray,
-                  offset: Offset(0, 0),
-                  blurRadius: 1.0,
-                  spreadRadius: 1,
-                ),
-              ],
+    return Padding(
+      padding: EdgeInsets.only(top: 2.h, left: 6.w, right: 6.w),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => HouseDetailPage(
+              house: house,
+              calculatedDistance: calculatedDistance,
+              imageUrl: 'https://intern.d-tt.nl/${house.image}',
+              imageId: 'house_${house.id}.jpg',
             ),
-            child: Padding(
-              padding: EdgeInsets.all(3.w),
-              child: Row(
-                children: [
-                  // Replace Image.network with a BlocBuilder
-                  BlocBuilder<ImageLoadBloc, ImageState>(
-                    builder: (context, state) {
-                      if (state is ImageLoadSuccess) {
+          ));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Palette.white,
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                color: Palette.darkgray,
+                offset: Offset(0, 0),
+                blurRadius: 1.0,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(3.w),
+            child: Row(
+              children: [
+                BlocBuilder<ImageLoadBloc, ImageState>(
+                  builder: (context, state) {
+                    if (state is ImageLoadSuccess) {
+                      File? imageFile = state.loadedImages['house_${house.id}.jpg'];
+                      if (imageFile != null) {
+                        // Image file is not null, safe to use.
                         return Container(
                           width: 10.h,
                           height: 10.h,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.file(
-                              state.image,
+                              imageFile,
                               fit: BoxFit.cover,
                               width: 10.h,
                               height: 10.h,
@@ -72,8 +73,7 @@ class HouseListItem extends StatelessWidget {
                           ),
                         );
                       } else {
-                        // Fallback placeholder image
-                        print('Placeholder');
+                        // Image file is null, provide a fallback.
                         return Container(
                           width: 10.h,
                           height: 10.h,
@@ -88,16 +88,40 @@ class HouseListItem extends StatelessWidget {
                           ),
                         );
                       }
-                    },
-                  ),
-                  SizedBox(width: 5.w),
-                  // Column for title, subtitle, and the row of icons and texts
-                  Container(
-                    height: 10.h,
-                    child: HouseListTileContent(house: house, calculatedDistance: calculatedDistance),
-                  ),
-                ],
-              ),
+                    }
+                    // If the image is still loading, show a loading indicator
+                    else if (state is ImageLoadInProgress) {
+                      return Container(
+                        width: 10.h,
+                        height: 10.h,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    // If the image loading has failed, show a placeholder
+                    else {
+                      return Container(
+                        width: 10.h,
+                        height: 10.h,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            'Images/place_holder.png',
+                            fit: BoxFit.cover,
+                            width: 10.h,
+                            height: 10.h,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(width: 5.w),
+                Container(
+                  height: 10.h,
+                  child: HouseListTileContent(house: house, calculatedDistance: calculatedDistance),
+                ),
+              ],
             ),
           ),
         ),

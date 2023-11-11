@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sizer/sizer.dart';
 import '../utils/styles.dart';
-import 'package:intl/intl.dart';
-import 'house_detail_page.dart';
 import '../models/house.dart';
 import 'package:latlong2/latlong.dart';
 import '../widgets/build_house_list_widget.dart';
@@ -12,6 +9,7 @@ import '../blocs/house_list_manage_blocs/house_list_manage_bloc.dart';
 import '../states/house_list_manage_states/house_list_manage_states.dart';
 import '../events/house_list_manage_events/house_list_manage_events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
 
 class HousesListPage extends StatelessWidget {
   final List<House> allHouses;
@@ -77,6 +75,7 @@ class HousesListPage extends StatelessWidget {
               Expanded(
                 child: BuildHouseListWidget(houses: housesToShow, currentLocation: currentLocation),
               ),
+
 
             ],
           ),

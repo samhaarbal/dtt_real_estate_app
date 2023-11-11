@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/house.dart';
 import '../widgets/calculate_distance_widget.dart';
 import '../widgets/house_list_item.dart';
 import 'package:sizer/sizer.dart';
 import '../utils/styles.dart';
 import 'package:latlong2/latlong.dart';
+import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
 
 class BuildHouseListWidget extends StatelessWidget {
   final List<House> houses;
@@ -39,7 +41,6 @@ class BuildHouseListWidget extends StatelessWidget {
               houseLatitude: house.latitude,
               houseLongitude: house.longitude
           );
-
           return HouseListItem(house: house, calculatedDistance: calculatedDistance);
         },
       );

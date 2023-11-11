@@ -7,12 +7,19 @@ import 'package:intl/intl.dart';
 import '../widgets/location_map_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../widgets/icon_text_group.dart';
+import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
+import '../states/house_list_manage_states/image_load_states.dart';
+import '../events/house_list_manage_events/image_load_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:io';
 
 class HouseDetailPage extends StatefulWidget { //stateful because of the scrolling possibility, mutable states because of user input
-  final House house; //import data from the house instance set up inside the itembuilder in the houselistpage
-  final calculatedDistance; // import the calculated distance future from houselistpage
+  final House house;
+  final Widget calculatedDistance;
+  final String imageUrl;
+  final String imageId;
 
-  HouseDetailPage({required this.house, required this.calculatedDistance});
+  HouseDetailPage({required this.house, required this.calculatedDistance, required this.imageUrl, required this.imageId});
 
   @override
   _HouseDetailPageState createState() => _HouseDetailPageState();
@@ -45,6 +52,9 @@ class _HouseDetailPageState extends State<HouseDetailPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    BlocProvider.of<ImageLoadBloc>(context, listen: false).add(
+      LoadImage('https://intern.d-tt.nl/${widget.house.image}', 'house_${widget.house.id}.jpg'),
+    );
   }
 
 // build the context for this page
@@ -53,12 +63,29 @@ class _HouseDetailPageState extends State<HouseDetailPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Image.network(
-            'https://intern.d-tt.nl/${widget.house.image}',
-            fit: BoxFit.cover,
-            height: 35.h,
-            width: double.infinity,
+          BlocBuilder<ImageLoadBloc, ImageState>(
+            builder: (context, state) {
+              if (state is ImageLoadSuccess) {
+                File? imageFile = state.loadedImages['house_${widget.house.id}.jpg'];
+                if (imageFile != null) {
+                  // Image file is not null, safe to use.
+                  return Image.file(imageFile, fit: BoxFit.cover, height: 35.h, width: double.infinity);
+                } else {
+                  // Image file is null, provide a fallback.
+                  return Image.asset('Images/place_holder.png', fit: BoxFit.cover, height: 35.h, width: double.infinity);
+                }
+              }
+              // If the image is still loading, show a loading indicator
+              else if (state is ImageLoadInProgress) {
+                return CircularProgressIndicator();
+              }
+              // If the image loading has failed, show a placeholder
+              else {
+                return Image.asset('Images/place_holder.png', fit: BoxFit.cover, height: 35.h, width: double.infinity);
+              }
+            },
           ),
+
           CustomScrollView(
             controller: _scrollController,
             slivers: [
