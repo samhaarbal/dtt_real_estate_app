@@ -14,8 +14,9 @@ import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
 class HousesListPage extends StatelessWidget {
   final List<House> allHouses;
   final LatLng currentLocation;
+  final bool failureMessage;
 
-  HousesListPage({required this.allHouses, required this.currentLocation});
+  HousesListPage({required this.allHouses, required this.currentLocation, required this.failureMessage});
 
 // this is where we build the context with all the available widgets that we created before
   @override
@@ -72,11 +73,15 @@ class HousesListPage extends StatelessWidget {
                 ),
               ),
 
-              Expanded(
-                child: BuildHouseListWidget(houses: housesToShow, currentLocation: currentLocation),
+              failureMessage
+                  ? Expanded(  // This will take all available space
+                child: Center(
+                  child: Text('Failed to load houses. Connect to the internet'),
+                ),
+              )
+                  : Expanded(
+                    child: BuildHouseListWidget(houses: housesToShow, currentLocation: currentLocation),
               ),
-
-
             ],
           ),
         );

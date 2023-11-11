@@ -1,17 +1,26 @@
 import 'package:latlong2/latlong.dart';
 
-abstract class LocationPermissionState {}
+abstract class LocationPermissionState {
+  final LatLng location;
 
-class LocationPermissionLoading extends LocationPermissionState {}
+  LocationPermissionState({LatLng? location})
+      : this.location = location ?? LatLng(0.0, 0.0);
+}
+
+class LocationPermissionLoading extends LocationPermissionState {
+  LocationPermissionLoading() : super();
+}
 
 class LocationPermissionGrantedState extends LocationPermissionState {
   final LatLng location;
 
-  LocationPermissionGrantedState(this.location);
+  LocationPermissionGrantedState(this.location) : super(location: location);
 }
 
 class LocationPermissionDeniedState extends LocationPermissionState {
-  final LatLng location;
+  LocationPermissionDeniedState() : super();
+}
 
-  LocationPermissionDeniedState() : location = LatLng(0.0, 0.0);
+class LocationPermissionNoConnection extends LocationPermissionState {
+  LocationPermissionNoConnection() : super();
 }

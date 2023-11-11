@@ -96,28 +96,26 @@ class _HomePageState extends State<HomePage> {
 
 
             // Now return the Scaffold with the conditions above
+            print(showBottomNavigationBar);
+            print(showLoadFailureMessage);
+            print(showSplashScreen);
             return Scaffold(
               backgroundColor: Palette.lightgray,
               body: showSplashScreen ? SplashScreen() :
-              showLoadFailureMessage ? const Center(
-                  child: Text('Failed to load houses. Connect to the internet')) :
               IndexedStack(
                 index: _currentIndex,
                 children: [
-                  if (housesFetchState is HousesFetchSuccess &&
-                      LocationPermissionState is! LocationPermissionLoading)
-                    BlocProvider<HouseListManageBloc>(
-                      create: (context) =>
-                          HouseListManageBloc((housesFetchState).houses),
-                      child: HousesListPage(
-                        currentLocation: locationPermissionState is LocationPermissionGrantedState
-                            ? (locationPermissionState).location
-                            : currentLocation,
-                        allHouses: (housesFetchState).houses,
-                      ),
+                  BlocProvider<HouseListManageBloc>(
+                    create: (context) => HouseListManageBloc(housesFetchState.houses),
+                    child: HousesListPage(
+                      currentLocation: locationPermissionState.location,
+                      allHouses: housesFetchState.houses,
+                      failureMessage: showLoadFailureMessage,
                     ),
+                  ),
                   InfoPage(),
                 ],
+
               ),
               bottomNavigationBar: showBottomNavigationBar
                   ? Container(
