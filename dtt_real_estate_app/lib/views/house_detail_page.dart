@@ -60,6 +60,8 @@ class _HouseDetailPageState extends State<HouseDetailPage> {
 // build the context for this page
   @override
   Widget build(BuildContext context) {
+    print(widget.house.latitude);
+    print(widget.house.longitude);
     return Scaffold(
       body: Stack(
         children: [
@@ -117,6 +119,7 @@ class _HouseDetailPageState extends State<HouseDetailPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               // Price to the left
+
                               Text('\$${NumberFormat("#,###").format(widget.house.price)}', style: CustomTextStyles.title03,),
 
                               // Container for row with icons

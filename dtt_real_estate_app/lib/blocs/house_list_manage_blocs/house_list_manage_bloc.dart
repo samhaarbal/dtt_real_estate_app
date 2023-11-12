@@ -3,14 +3,26 @@ import 'package:dtt_real_estate_app/events/house_list_manage_events/house_list_m
 import 'package:dtt_real_estate_app/states/house_list_manage_states/house_list_manage_states.dart';
 import 'package:dtt_real_estate_app/models/house.dart';
 
+
+/// A Bloc that manages the state of a list of houses, including sorting and searching functionality
 class HouseListManageBloc extends Bloc<HouseListManageEvent, HouseListManageState> {
   final List<House> allHouses;
 
+  /// Indicates if the sorting of houses should be in ascending order by default
+  static const bool defaultSortAscending = true;
+
+
+  /// Constructs a [HouseListManageBloc] with an initial sorted state of houses.
   HouseListManageBloc(this.allHouses)
-      : super(NoSearchState(allHouses..sort((a, b) => a.price.compareTo(b.price)))) {
+      : super(NoSearchState([])) {
     on<SearchTextChanged>(_onSearchTextChanged);
     on<SortHousesByPriceEvent>(_onSortHousesByPrice);
     on<ClearSearchEvent>(_onClearSearch);
+
+    // Initialize with sorted houses
+    _sortHouses(allHouses, defaultSortAscending).then((sortedHouses) {
+      emit(NoSearchState(sortedHouses));
+    });
   }
 
   Future<void> _onSearchTextChanged(
@@ -20,8 +32,8 @@ class HouseListManageBloc extends Bloc<HouseListManageEvent, HouseListManageStat
     final searchText = event.searchText.toLowerCase().replaceAll(' ', '');
     final filteredHouses = await Future(() {
       return allHouses.where((house) =>
-      house.city.toLowerCase().replaceAll(' ', '').contains(searchText) ||
-          house.zip.toLowerCase().replaceAll(' ', '').contains(searchText)
+      (house.city+house.zip).toLowerCase().replaceAll(' ', '').contains(searchText) ||
+          (house.zip+house.city).toLowerCase().replaceAll(' ', '').contains(searchText)
       ).toList();
     });
 
@@ -59,8 +71,8 @@ class HouseListManageBloc extends Bloc<HouseListManageEvent, HouseListManageStat
       ClearSearchEvent event,
       Emitter<HouseListManageState> emit) async {
     // Resetting the state to NoSearchState with sorted houses
-    final sortedHouses = await _sortHouses(allHouses, true);
-    emit(NoSearchState(sortedHouses, sortAscendingByPrice: true));
+    final sortedHouses = await _sortHouses(allHouses, defaultSortAscending);
+    emit(NoSearchState(sortedHouses));
   }
 
   // Utility function for sorting houses

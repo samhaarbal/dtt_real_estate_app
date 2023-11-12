@@ -6,12 +6,15 @@ import 'package:dtt_real_estate_app/states/app_initialization_states/location_pe
 import 'package:permission_handler/permission_handler.dart' as hand;
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+/// Bloc to handle the location permission and connectivity state of the app.
 class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermissionState> {
+  /// Initializes the Bloc with an initial loading state.
   LocationPermissionBloc() : super(LocationPermissionLoading()) {
     on<LocationPermissionRequested>(_onLocationPermissionRequested);
     on<CheckInitialPermissionStatus>(_onCheckInitialPermissionStatus);
   }
 
+  /// Handles the event to check initial location permission status.
   Future<void> _onCheckInitialPermissionStatus(
       CheckInitialPermissionStatus event,
       Emitter<LocationPermissionState> emit,
@@ -31,6 +34,7 @@ class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermi
     }
   }
 
+  /// Handles the event to request location permission from the user.
   Future<void> _onLocationPermissionRequested(
       LocationPermissionRequested event,
       Emitter<LocationPermissionState> emit,
@@ -49,6 +53,7 @@ class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermi
     }
   }
 
+  /// Emits a state when location permission is granted, including the current location.
   Future<void> _emitLocationGranted(Emitter<LocationPermissionState> emit) async {
     final Location location = Location();
     final LocationData locationData = await location.getLocation();

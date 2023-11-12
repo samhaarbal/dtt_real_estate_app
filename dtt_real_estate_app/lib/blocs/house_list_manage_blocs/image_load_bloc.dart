@@ -6,14 +6,17 @@ import 'package:http/http.dart' as http;
 import 'package:dtt_real_estate_app/events/house_list_manage_events/image_load_event.dart';
 import 'package:dtt_real_estate_app/states/house_list_manage_states/image_load_states.dart';
 
-
+/// A Bloc that handles the loading and caching of images.
 class ImageLoadBloc extends Bloc<ImageEvent, ImageState> {
+  /// A cache for storing loaded images.
   final Map<String, File> loadedImages = {};
 
+  /// Initializes the ImageLoadbloc with the initial state.
   ImageLoadBloc() : super(ImageInitial()) {
     on<LoadImage>(_onLoadImage);
   }
 
+  /// Handles the event of loading an image.
   Future<void> _onLoadImage(LoadImage event, Emitter<ImageState> emit) async {
     final directory = await getApplicationDocumentsDirectory();
     final filePath = File('${directory.path}/${event.filename}');
@@ -57,4 +60,3 @@ class ImageLoadBloc extends Bloc<ImageEvent, ImageState> {
     }
   }
 }
-
