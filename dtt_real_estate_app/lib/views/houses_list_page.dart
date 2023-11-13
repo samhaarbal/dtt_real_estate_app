@@ -10,6 +10,7 @@ import '../states/house_list_manage_states/house_list_manage_states.dart';
 import '../events/house_list_manage_events/house_list_manage_events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
+import '../events/house_list_manage_events/image_load_event.dart';
 
 class HousesListPage extends StatelessWidget {
   final List<House> allHouses;
@@ -18,9 +19,26 @@ class HousesListPage extends StatelessWidget {
 
   HousesListPage({required this.allHouses, required this.currentLocation, required this.failureMessage});
 
+  /// Creates a list of image filenames based on the given list of houses.
+  List<String> _createFilenamesList() {
+    return allHouses.map((house) => 'house_${house.id}.jpg').toList();
+  }
+
 // this is where we build the context with all the available widgets that we created before
   @override
   Widget build(BuildContext context) {
+
+    // Use method to get the filenames list
+    final List<String> filenames = _createFilenamesList();
+
+    // Dispatch the UpdateLocallyStoredImages event with the list of filenames to delete all images from the local storage
+    // from houses that are no longer present online
+    if (filenames.isNotEmpty) {
+      BlocProvider.of<ImageLoadBloc>(context).add(
+        UpdateLocallyStoredImages(filenames),
+      );
+    }
+
     return BlocBuilder<HouseListManageBloc, HouseListManageState>(
       builder: (context, houseListManageState) {
 
