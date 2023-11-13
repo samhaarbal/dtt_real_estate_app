@@ -12,98 +12,96 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/house_list_manage_blocs/image_load_bloc.dart';
 import '../events/house_list_manage_events/image_load_event.dart';
 
+/// HousesListPage is a StatelessWidget that presents a list of houses,
+/// a search bar, and an option to sort houses by price.
 class HousesListPage extends StatelessWidget {
+  /// A list containing all house data.
   final List<House> allHouses;
+
+  /// The current user's location.
   final LatLng currentLocation;
+
+  /// A flag indicating if a failure message should be displayed.
   final bool failureMessage;
 
-  HousesListPage({required this.allHouses, required this.currentLocation, required this.failureMessage});
+  /// Constructor for HousesListPage which takes a list of all houses,
+  /// the current location, and a failure message flag.
+  HousesListPage({
+    required this.allHouses,
+    required this.currentLocation,
+    required this.failureMessage,
+  });
 
-  /// Creates a list of image filenames based on the given list of houses.
+  /// A method that creates a list of image filenames from the list of houses.
   List<String> _createFilenamesList() {
     return allHouses.map((house) => 'house_${house.id}.jpg').toList();
   }
 
-// this is where we build the context with all the available widgets that we created before
   @override
   Widget build(BuildContext context) {
-
-    // Use method to get the filenames list
+    // Get the filenames list for image management.
     final List<String> filenames = _createFilenamesList();
 
-    // Dispatch the UpdateLocallyStoredImages event with the list of filenames to delete all images from the local storage
-    // from houses that are no longer present online
+    // Update locally stored images if the list of filenames is not empty.
     if (filenames.isNotEmpty) {
-      BlocProvider.of<ImageLoadBloc>(context).add(
-        UpdateLocallyStoredImages(filenames),
-      );
+      BlocProvider.of<ImageLoadBloc>(context).add(UpdateLocallyStoredImages(filenames));
     }
 
+    // Build the UI based on the HouseListManageBloc state.
     return BlocBuilder<HouseListManageBloc, HouseListManageState>(
-      builder: (context, houseListManageState) {
+        builder: (context, houseListManageState) {
+          // Houses to show based on the current state.
+          List<House> housesToShow = houseListManageState.houses;
 
-        // Specify houses that need to be shown. Bloc logic is so that the state always contains list to be shown
-        List<House> housesToShow = houseListManageState.houses;
-
-        return Container(
-          color: Palette.lightgray,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,  // Set cross-axis alignment to start (left)
-            children: [
-              SizedBox(height: 6.h),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 6.w),
-                child: Text(
-                    "DTT REAL ESTATE",
-                    style: CustomTextStyles.title03
+          return Container(
+            color: Palette.lightgray,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 6.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 6.w),
+                  child: Text("DTT REAL ESTATE", style: CustomTextStyles.title03),
                 ),
-              ),
-              Padding( // Using the SearchBar widget here
-                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 6.w),
-                child: CustomSearchBar(
-                  onSearchChanged: (searchText) {
-                    BlocProvider.of<HouseListManageBloc>(context).add(SearchTextChanged(searchText));
-                  },
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 6.w),
+                  child: CustomSearchBar(
+                    onSearchChanged: (searchText) {
+                      // Trigger the search text change event.
+                      BlocProvider.of<HouseListManageBloc>(context).add(SearchTextChanged(searchText));
+                    },
+                  ),
                 ),
-              ),
-              Padding( // Insert the sorting button here
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,  // This will push all elements to the edges of the row
-                  children: [  // Start of children list
-                    GestureDetector(
-                      onTap: () {
-                        if (houseListManageState.sortAscendingByPrice) {
-                          BlocProvider.of<HouseListManageBloc>(context).add(SortHousesByPriceEvent(false));
-                        } else {
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // Toggle sorting order when the sort icon is tapped.
                           BlocProvider.of<HouseListManageBloc>(context).add(
-                              SortHousesByPriceEvent(true));
-                        }
-                      },
-                      child: Container(
-                        child: Icon(
-                          Icons.sort,
-                          size: 5.w,  // Adjust size as needed
-                        ),
-                      ),
-                    )
-                  ],  // End of children list
+                              SortHousesByPriceEvent(!houseListManageState.sortAscendingByPrice)
+                          );
+                        },
+                        child: Icon(Icons.sort, size: 5.w),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-
-              failureMessage
-                  ? Expanded(  // This will take all available space
-                child: Center(
-                  child: Text('Failed to load houses. Connect to the internet'),
+                failureMessage
+                    ? Expanded(
+                  child: Center(
+                    child: Text('Failed to load houses. Connect to the internet'),
+                  ),
+                )
+                    : Expanded(
+                  child: BuildHouseListWidget(houses: housesToShow, currentLocation: currentLocation),
                 ),
-              )
-                  : Expanded(
-                    child: BuildHouseListWidget(houses: housesToShow, currentLocation: currentLocation),
-              ),
-            ],
-          ),
-        );
-      }
+              ],
+            ),
+          );
+        }
     );
   }
 }
